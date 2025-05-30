@@ -26,10 +26,8 @@ $ docker build -t drama-service:latest ./drama-service
 $ docker build -t episode-service:latest ./episode-service
 $ docker build -t stream-service:latest ./stream-service
 
-# Helm deploy
-$ helm install drama ./k8s/drama
-$ helm install episode ./k8s/episode
-$ helm install stream ./k8s/stream
+# Terraform
+$ terraform apply --auto-approve
 ```
 ---
 ## 3. Usage
@@ -47,21 +45,21 @@ GET /dramas/{id}    # Fetch detailed info about a single drama
 ---
 ## 4. Architecture and Observability
 ### Infrastructure Provisioning Workflow
-1. Terraform provisions core AWS infrastructure components: VPC, subnets, IAM roles, EKS cluster, and the OIDC provider for service identity.
-2. IAM Roles are securely linked to Kubernetes ServiceAccounts using IRSA (IAM Roles for Service Accounts), enabling Pod-level access control to AWS resources such as S3 or Load Balancers.
+1. Terraform provisions core AWS infrastructure components: VPC, subnets, IAM roles, EKS cluster, and the **OIDC** provider for service identity.
+2. IAM Roles are securely linked to Kubernetes ServiceAccounts using **IRSA** (IAM Roles for Service Accounts), enabling Pod-level access control to AWS resources such as S3 or Load Balancers.
 3. Helm is used to install key observability components into the Kubernetes cluster:
     - AWS ALB Controller for ingress traffic management
     - Istio for service mesh and traffic routing
     - Jaeger for distributed tracing
     - Prometheus and Grafana for metric collection and real-time dashboard visualization
-4. Application Services (drama, episode, stream) are deployed as independent Helm charts and managed within the service mesh.
+4. Application Services (drama, episode, stream) are deployed as independent **Helm charts** and managed within the service mesh.
 
 - Istio Gateway routes traffic from AWS ALB to Kubernetes
 - VirtualService rules distribute traffic to drama → episode → stream services
-- Each Pod has an Envoy sidecar to collect trace data
-- Traces are sent to Jaeger
-- Metrics are collected via Prometheus and visualized in Grafana
-- Infrastructure is provisioned via Terraform, deployed via Helm and GitHub Actions
+- Each Pod has an **Envoy sidecar** to collect trace data
+- Traces are sent to **Jaeger**
+- Metrics are collected via **Prometheus** and visualized in Grafana
+- Infrastructure is provisioned via Terraform, deployed via Helm and **GitHub Actions**
 
 ### IRSA (IAM Roles for Service Accounts)
 
@@ -75,5 +73,5 @@ We implemented IRSA to grant AWS permissions (like ALB or S3 access) to specific
 ## 6. Team Member
 | Hyomin An | HyeJin Shim | Yongbeom Kim | Chanhoon Kim | Juseung Lee |
 | :---: | :---: | :---: | :---: | :---: |
-| Leader, BE | Infra(Terraform, Helm) | CI/CD(Github Actions) | Infra(Terraform, Helm) | FE |
+| Team Leader, BE | Infra (Terraform, Helm) | CI/CD (Github Actions) | Infra (Terraform, Helm) | FE |
 | <img src="https://avatars.githubusercontent.com/u/98948416?v=4" alt="hyomin profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/204316388?v=4" alt="hyejin profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/122729196?v=4" alt="yongbeom profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/134241229?v=4" alt="chanhk1 profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/194181560?v=4" alt="juseung profile" width="180" height="180">

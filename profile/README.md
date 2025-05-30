@@ -73,7 +73,7 @@ We implemented IRSA to grant AWS permissions (like ALB or S3 access) to specific
 
 ---
 ## 6. Team Member
-| Hyomin An | HyeJin Shim | Yongbeom Kim | Chanhun Kim | Juseung Lee |
+| Hyomin An | HyeJin Shim | Yongbeom Kim | Chanhoon Kim | Juseung Lee |
 | :---: | :---: | :---: | :---: | :---: |
 | Leader, BE | Infra(Terraform, Helm) | CI/CD(Github Actions) | Infra(Terraform, Helm) | FE |
 | <img src="https://avatars.githubusercontent.com/u/98948416?v=4" alt="hyomin profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/204316388?v=4" alt="hyejin profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/122729196?v=4" alt="yongbeom profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/134241229?v=4" alt="chanhk1 profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/194181560?v=4" alt="juseung profile" width="180" height="180">

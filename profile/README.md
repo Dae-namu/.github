@@ -1,76 +1,61 @@
-# Drama Streaming MSA Project 
+# Drama Streaming MSA 프로젝트
 
-## 1. Project Overview
+## 1. 프로젝트 개요
 
-MSA-based API Bottleneck Tracing and Visualization Infrastructure
+MSA 기반 API 병목 추적 및 시각화 인프라 구축
 
-### Topic & Background 
-This project was initiated with the question: "How much do API response delays impact user experience and revenue?" Inspired by Amazon’s report that a 100ms delay could reduce revenue by 1%, and Google’s discovery that a 0.5s delay leads to a 20% traffic drop, we focused on making API delays observable.
-
-Our goal was to build an infrastructure that **traces inter-service traffic flow**, identifies bottlenecks, and **visualizes the delay in real-tim**e. We designed a microservice architecture (**MSA**) with **Spring Boot** and implemented observability using **Istio**, **Jaeger**, **Prometheus**, and **Grafana**.
+### 주제 및 배경
+Amazon은 100ms의 지연이 매출의 1% 감소로 이어질 수 있다고 보고했으며, Google은 0.5초의 지연이 트래픽을 20% 감소시킨다 밝혔다. 이에 착안해 본 프로젝트는 API 지연을 관측하고 병목부분을 추적할 수 있는 인파를 구축하는 것을 목표로 시작했다. 
 
 ---
-## 2. Installation & Execution
-### Requirements
+## 2. 설치 및 실행 방법
+### 필수 환경
 - Java 17
-- SpringBoot 3.2.5
-- Docker & Kubernetes (Minikube or AWS EKS)
+- Spring Boot 3.2.5
+- Docker & Kubernetes (Minikube, AWS EKS)
 - Node.js 18
 - React 19.1.0
-- Node.js 22.16.0
 
-### Setup
-```
-# Docker build
-$ docker build -t drama-service:latest ./drama-service
-$ docker build -t episode-service:latest ./episode-service
-$ docker build -t stream-service:latest ./stream-service
 
-# Terraform
-$ terraform apply --auto-approve
-```
----
-## 3. Usage
-### Scenario
-1. When a user clicks a drama on the frontend, the following API sequence is triggered:
-2. drama-service receives the initial request
-3. It requests episode info from episode-service
-4. Then calls stream-service to get a presigned S3 URL
-5. This entire sequence is traced through Envoy proxies and visualized in Jaeger
+## 3. 사용 시나리오
+### 전체 흐름
+1. 사용자가 드라마를 클릭하면 다음과 같은 API 호출 흐름이 발생한다.
+2. drama-service가 초기 요청을 수신한다.
+3. episode-service로 회차 정보를 요청한다.
+4. 이후 stream-service에 S3의 Pre-signed URL을 요청한다.
+5. 이 전체 흐름은 Envoy Proxy를 통해 추적되어 Jaeger에서 시각화된다.
 
 ```
-GET /dramas         # List all dramas with episodes and stream URLs
-GET /dramas/{id}    # Fetch detailed info about a single drama
+GET /dramas         # 모든 드라마, 회차. 스트리밍 URL 조회
+GET /dramas/{id}    # 특정 드라마의 상세 정보 조회
 ```
----
-## 4. Architecture and Observability
-### Infrastructure Provisioning Workflow
-1. Terraform provisions core AWS infrastructure components: VPC, subnets, IAM roles, EKS cluster, and the **OIDC** provider for service identity.
-2. IAM Roles are securely linked to Kubernetes ServiceAccounts using **IRSA** (IAM Roles for Service Accounts), enabling Pod-level access control to AWS resources such as S3 or Load Balancers.
-3. Helm is used to install key observability components into the Kubernetes cluster:
-    - AWS ALB Controller for ingress traffic management
-    - Istio for service mesh and traffic routing
-    - Jaeger for distributed tracing
-    - Prometheus and Grafana for metric collection and real-time dashboard visualization
-4. Application Services (drama, episode, stream) are deployed as independent **Helm charts** and managed within the service mesh.
 
-- Istio Gateway routes traffic from AWS ALB to Kubernetes
-- VirtualService rules distribute traffic to drama → episode → stream services
-- Each Pod has an **Envoy sidecar** to collect trace data
-- Traces are sent to **Jaeger**
-- Metrics are collected via **Prometheus** and visualized in Grafana
-- Infrastructure is provisioned via Terraform, deployed via Helm and **GitHub Actions**
+## 4. 아키텍처 및 관측 (Observability)
+### 인프라 구성 흐름
+1. Terraform을 통해 AWS 주요 리소스 구성
+   - VPC, Subnet, IAM Role, EKS 클러스터, OIDC Provider 등
+2. Kubernetes의 ServiceAccount에 IAM Role을 연결하는 IRSA를 구한하여 S3, ALB 등 AWS 리소스에 Pod 단위로 권한을 부여한다.
+3. Helm을 통해 주요 관측 도구를 클러스터에 설치한다.
+   - AWS ALB Controller (Ingress 트래픽 관리)
+   - Istio (서비스 메시 및 라우팅)
+   - Jaeger (추적)
+   - Prometheus & Grafana (메트릭 수집 및 시각화 대시보드)
+4. drama, episode, stream 서비스는 각기 독립된 Helm Chart로 배포되며 Istio로 연결된다.
+   - Istio Gateway가 AWS ALB로부터의 트래픽 수신
+   - VirtualService가 트래픽을 drama > episode > stream으로 분산
+   - 모든 Pod에는 Envoy Sidecar가 붙어 트레이스를 수집
+   - 트레이스는 Jaeger로 전송
+   - 메트릭은 Prometheus로 수집되고 Grafana에서 시각화
+   - 인프라는 Terraform으로 구성되고 Helm과 Github Actions로 배포된다.
 
-### IRSA (IAM Roles for Service Accounts)
+ ### IRSA 구성
+ IRSA(IAM Roles for Service Accounts)를 통해 각 서비스에 필요한 AWS 권한(S3 접근, ALB 권한 등)을 안전하게 부여했다. 
+ Terraform을 통해 OIDC 연결 및 IAM 설정을 자동화하고, Helm Chart 내에서 해당 IAM role이 지정된 ServiceAccount를 사용하도록 구성했다. 
 
-We implemented IRSA to grant AWS permissions (like ALB or S3 access) to specific Kubernetes ServiceAccounts. OIDC providers were linked via Terraform, and Helm charts assigned IAM roles to services securely.
+ ## 5. 아키텍처 다이어그램 
+ ![image](https://github.com/user-attachments/assets/d27dc057-a1f4-4711-a132-5a0475f0172d)
 
----
-## 5. Architecture Diagram
-![image](https://github.com/user-attachments/assets/d27dc057-a1f4-4711-a132-5a0475f0172d)
-
----
-## 6. Team Member
+ ## 6. 팀 구성
 | Hyomin An | HyeJin Shim | Yongbeom Kim | Chanhoon Kim | Juseung Lee |
 | :---: | :---: | :---: | :---: | :---: |
 | Team Leader, BE | Infra (Terraform, Helm) | CI/CD (Github Actions) | Infra (Terraform, Helm) | FE |

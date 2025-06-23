@@ -56,7 +56,7 @@ GET /dramas/{id}    # 특정 드라마의 상세 정보 조회
  ![image](https://github.com/user-attachments/assets/d27dc057-a1f4-4711-a132-5a0475f0172d)
 
  ## 6. 팀 구성
-| Hyomin An | HyeJin Shim | Yongbeom Kim | Chanhoon Kim | Juseung Lee |
+| 안효민 | 심혜진 | 김용범 | 김찬훈 | 이주승 |
 | :---: | :---: | :---: | :---: | :---: |
 | Team Leader, BE | Infra (Terraform, Helm) | CI/CD (Github Actions) | Infra (Terraform, Helm) | FE |
 | <img src="https://avatars.githubusercontent.com/u/98948416?v=4" alt="hyomin profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/204316388?v=4" alt="hyejin profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/122729196?v=4" alt="yongbeom profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/134241229?v=4" alt="chanhk1 profile" width="180" height="180"> | <img src="https://avatars.githubusercontent.com/u/194181560?v=4" alt="juseung profile" width="180" height="180">
